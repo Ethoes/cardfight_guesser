@@ -32,7 +32,7 @@ const CreateRoom = (props) => {
         roomname,
         gamemode,
         chosenBoosters,
-        players: [username],
+        players: [{username : username, lastAwnser: '', hasAwsered: false}],
         roomOwner: username,
         gamePhase: 'lobby',
         cards: [],

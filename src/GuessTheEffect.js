@@ -7,7 +7,9 @@ const GuessTheEffect = () => {
   const [gamePhase, setGamePhase] = useState('');
   const [cardAnswer, setCardAnswer] = useState([]);
   const [shuffledAnswers, setShuffledAnswers] = useState([]);
+  const [hasAnswered, setHasAnswered] = useState(false);
   let cardSamples = [];
+  let isUpated = false;
 
 
   const fetchUsers = async () => {
@@ -16,19 +18,27 @@ const GuessTheEffect = () => {
       const data = await response.json();
       
       setUsers(data.users);
-      console.log('gamePhase', gamePhase);
-      console.log('data.gamePhase', data.gamePhase);
-      // if(data.gamePhase !== gamePhase) {
-        cardSamples = [];
-        cardSamples.push(data.cardSamples);
-        if (cardAnswer && cardSamples[0].length === 4) {
+        let isNew = false;
+        console.log(cardSamples)
+        
+        // Check if all card names in data.cardSamples are found in cardSamples
+        if (data.cardSamples.every(sample => cardSamples.some(card => card.name === sample.name))) {
+          isNew = false;
+        } else {
+          isNew = true;
+        }
+
+
+        if (isNew) {
+          setHasAnswered(false);
           const answers = [...cardSamples[0], cardAnswer];
           setShuffledAnswers(prev => shuffleArray(answers));
-          // console.log('shuffledAnswers', shuffledAnswers[0]?.name);
+          isUpated = true;
+          cardSamples = data.cardSamples;
         }
       setGamePhase(data.gamePhase);
       setCardAnswer(data.cardAnswer);
-      // }
+      
     } catch (error) {
       console.error('Error fetching users:', error);
     }
@@ -50,11 +60,26 @@ const GuessTheEffect = () => {
   };
 
   const handleAnswer = (selectedCard) => {
-    if (selectedCard === cardAnswer) {
-      alert('Correct!');
-    } else {
-      alert('Incorrect!');
-    }
+    var isCorrect = false;
+    if (selectedCard?.name === cardAnswer?.name) {
+      isCorrect = true;
+    } 
+
+    setHasAnswered(true);
+    fetch(`http://localhost:3001/answer?room=${currentRoomName}&anwser=${selectedCard?.name}&username=${username}`, {
+      method: 'PUT'
+    })
+      .then(response => {
+        if (response.ok) {
+          // Game started successfully
+          // Add your code here
+        } else {
+          throw new Error('Failed send result');
+        }
+      })
+      .catch(error => {
+        console.error('Error sending result:', error);
+      });
   };
 
   const startGame = () => {
@@ -85,13 +110,27 @@ const GuessTheEffect = () => {
       {currentRoomOwner === username && gamePhase === 'lobby' && (
         <button onClick={() => startGame()}>Start Game</button>
       )}
+      {currentRoomOwner === username && gamePhase === 'nextQuestion' && (
+        <button onClick={() => startGame()}>next question</button>
+      )}
       <div>
-        <h3>Current Users:</h3>
-        <ul>
-          {users.map((user, index) => (
-            <li key={index}>{user}</li>
-          ))}
-        </ul>
+      <h3>Current Users:</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Last Answer</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user, index) => (
+              <tr key={index}>
+                <td>{user.username}</td>
+                <td>{user.lastAwnser}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       <div className="question" style={{ position: 'absolute', top: '20%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
@@ -99,13 +138,15 @@ const GuessTheEffect = () => {
         <h1>{cardAnswer?.name}</h1>
       </div>
 
-      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', display: 'flex', justifyContent: 'center', gap: '10px' }}>
-        {shuffledAnswers.map((card, index) => (
-          <button key={index} onClick={() => handleAnswer(card)}>
-            {card.effect}
-          </button>
-        ))}
-      </div>
+      {!hasAnswered && (
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', display: 'flex', justifyContent: 'center', gap: '10px' }}>
+          {shuffledAnswers.map((card, index) => (
+            <button key={index} onClick={() => handleAnswer(card)}>
+              {card.effect}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div style={{ position: 'absolute', top: '90%', left: '50%', transform: 'translate(-50%, -50%)' }}>
         <h1>Current Game Phase: {gamePhase}</h1>

@@ -58,13 +58,40 @@ app.put('/startGame', express.json(), (req, res) => {
   }
 });
 
+app.put('/answer', express.json(), (req, res) => {
+  const roomName = req.query.room;
+  const anwser = req.query.anwser;
+  const username = req.query.username;
+
+  const roomIndex = rooms.findIndex(room => room.roomname === roomName);
+  if (roomIndex !== -1) {
+    const room = rooms[roomIndex];
+    const userIndex = room.players.findIndex(player => player.username === username);
+    if (userIndex !== -1) {
+      room.players[userIndex].lastAwnser = anwser;
+      room.players[userIndex].hasAwsered = true;
+      res.json({ success: true });
+    } else {
+      res.json({ success: false, message: 'User not found' });
+    }
+
+    const allUsersAnswered = room.players.every(player => player.hasAwsered);
+    if (allUsersAnswered) {
+      room.gamePhase = 'nextQuestion';
+    }
+  } else {
+    res.json({ success: false, message: 'Room not found' });
+  }
+});
+
 app.put('/addplayer', express.json(), (req, res) => {
   const roomName = req.body.room;
   const player = req.body.player;
   const roomIndex = rooms.findIndex(room => room.roomname === roomName);
   if (roomIndex !== -1) {
     const room = rooms[roomIndex];
-    if (!room.players.includes(player)) {
+    const existingPlayer = room.players.find(p => p.username === player.username);
+    if (!existingPlayer) {
       room.players.push(player);
       res.json({ success: true });
     } else {

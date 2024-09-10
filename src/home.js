@@ -21,6 +21,7 @@ const Home = () => {
       .then(data => {
         if (Array.isArray(data?.rooms)) {
           setRooms(data.rooms);
+          console.log(data.rooms);
         } else {
           console.error("rooms is not an array:", data);
         }
@@ -49,7 +50,7 @@ const Home = () => {
         },
         body: JSON.stringify({
             room: roomname,
-            player: username
+            player: {username : username, lastAwnser: '', hasAwsered: false}
         })
     })
         .then(response => response.json())
@@ -90,7 +91,7 @@ const Home = () => {
               <tr key={index}>
                 <td>{room.roomname}</td>
                 <td>{room.gamemode}</td>
-                <td>{room.players.join(', ')}</td>
+                <td>{Array.isArray(room.players) ? room.players.map(player => player.username).join(', ') : ''}</td>
                 <Link to="/GuessTheEffect">
                     <button onClick={() => goToRoom(room.roomname, room.roomOwner)}>join</button>
                 </Link>
