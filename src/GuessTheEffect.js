@@ -9,7 +9,7 @@ const GuessTheEffect = () => {
   const [shuffledAnswers, setShuffledAnswers] = useState([]);
   const [hasAnswered, setHasAnswered] = useState(false);
   let cardSamples = [];
-  let isUpated = false;
+  let LastState = '';
 
 
   const fetchUsers = async () => {
@@ -18,23 +18,23 @@ const GuessTheEffect = () => {
       const data = await response.json();
       
       setUsers(data.users);
-        let isNew = false;
-        console.log(cardSamples)
+        let setUpQuestion = false;
         
-        // Check if all card names in data.cardSamples are found in cardSamples
-        if (data.cardSamples.every(sample => cardSamples.some(card => card.name === sample.name))) {
-          isNew = false;
-        } else {
-          isNew = true;
+        if(LastState !== data.gamePhase){
+          if(data.gamePhase === 'question'){
+            setUpQuestion = true;
+            setHasAnswered(false);
+          }
+          LastState = data.gamePhase;
         }
 
+        cardSamples = [];
+        cardSamples.push(data.cardSamples);
 
-        if (isNew) {
-          setHasAnswered(false);
+        if (setUpQuestion) {
           const answers = [...cardSamples[0], cardAnswer];
           setShuffledAnswers(prev => shuffleArray(answers));
-          isUpated = true;
-          cardSamples = data.cardSamples;
+          console.log(shuffledAnswers)
         }
       setGamePhase(data.gamePhase);
       setCardAnswer(data.cardAnswer);
@@ -142,7 +142,7 @@ const GuessTheEffect = () => {
         <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', display: 'flex', justifyContent: 'center', gap: '10px' }}>
           {shuffledAnswers.map((card, index) => (
             <button key={index} onClick={() => handleAnswer(card)}>
-              {card.effect}
+              {card?.effect}
             </button>
           ))}
         </div>
