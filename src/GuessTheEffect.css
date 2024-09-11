@@ -1,0 +1,16 @@
+.guess-the-effect-container {
+    display: flex;
+    justify-content: flex-end; /* Aligns the images to the right */
+    padding: 20px;
+  }
+  
+  .card-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Space between images */
+  }
+  
+  .card-image {
+    width: 50%; /* Set the image size to 50% */
+    height: auto; /* Maintain aspect ratio */
+  }

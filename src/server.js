@@ -42,6 +42,10 @@ app.put('/startGame', express.json(), (req, res) => {
   const roomIndex = rooms.findIndex(room => room.roomname === roomName);
   if (roomIndex !== -1) {
     const room = rooms[roomIndex];
+    room.players.forEach(player => {
+      player.lastAwnser = '';
+      player.hasAwsered = false;
+    });
     room.gamePhase = 'question';
     room.cardAnswer = room.cards[Math.floor(Math.random() * room.cards.length)];
     const foundCards = [];

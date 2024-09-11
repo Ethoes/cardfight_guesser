@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { UserContext } from './UserContext';
+import './GuessTheEffect.css';
 
 const GuessTheEffect = () => {
   const { currentRoomName, currentRoomOwner, username } = useContext(UserContext);
@@ -7,7 +8,9 @@ const GuessTheEffect = () => {
   const [gamePhase, setGamePhase] = useState('');
   const [cardAnswer, setCardAnswer] = useState([]);
   const [shuffledAnswers, setShuffledAnswers] = useState([]);
+  const [nonAnswers, setNonAnswers] = useState([]);
   const [hasAnswered, setHasAnswered] = useState(false);
+
   let cardSamples = [];
   let LastState = '';
 
@@ -32,8 +35,9 @@ const GuessTheEffect = () => {
         cardSamples.push(data.cardSamples);
 
         if (setUpQuestion) {
-          const answers = [...cardSamples[0], cardAnswer];
+          const answers = [...cardSamples[0], data.cardAnswer];
           setShuffledAnswers(prev => shuffleArray(answers));
+          setNonAnswers(prev => cardSamples[0]);
           console.log(shuffledAnswers)
         }
       setGamePhase(data.gamePhase);
@@ -133,10 +137,27 @@ const GuessTheEffect = () => {
         </table>
       </div>
 
-      <div className="question" style={{ position: 'absolute', top: '20%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
-        <h1>What is the effect of the following card? </h1>
-        <h1>{cardAnswer?.name}</h1>
+      {gamePhase === 'question' && (
+        <div className="question" style={{ position: 'absolute', top: '20%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
+          <h1>What is the effect of the following card? </h1>
+          <h1>{cardAnswer?.name}</h1>
+        </div>
+      )}
+
+      {gamePhase === 'nextQuestion' && (
+        <div className="question" style={{ position: 'absolute', top: '35%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
+          <h1>{cardAnswer?.name}</h1>
+          <img src={cardAnswer?.imageurlen} alt="Card Image" style={{width: '65%'}} />
+        </div>
+      )}
+
+      {gamePhase === 'nextQuestion' && (
+        <div style={{ position: 'absolute', top: '85%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
+          {nonAnswers.map(card => (
+            <img key={card.name} src={card?.imageurlen} style={{width: '25%'}} />
+          ))}
       </div>
+      )}
 
       {!hasAnswered && (
         <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', display: 'flex', justifyContent: 'center', gap: '10px' }}>
@@ -147,10 +168,10 @@ const GuessTheEffect = () => {
           ))}
         </div>
       )}
-
+{/* 
       <div style={{ position: 'absolute', top: '90%', left: '50%', transform: 'translate(-50%, -50%)' }}>
         <h1>Current Game Phase: {gamePhase}</h1>
-      </div>
+      </div> */}
     </div>
   );
 };
