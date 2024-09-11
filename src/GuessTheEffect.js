@@ -17,14 +17,14 @@ const GuessTheEffect = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/roomStatus?room=${currentRoomName}`);
+      const response = await fetch(`http://178.84.208.93:3001/roomStatus?room=${currentRoomName}`);
       const data = await response.json();
       
       setUsers(data.users);
         let setUpQuestion = false;
         
         if(LastState !== data.gamePhase){
-          if(data.gamePhase === 'question'){
+          if(data.gamePhase === 'question') {
             setUpQuestion = true;
             setHasAnswered(false);
           }
@@ -70,7 +70,7 @@ const GuessTheEffect = () => {
     } 
 
     setHasAnswered(true);
-    fetch(`http://localhost:3001/answer?room=${currentRoomName}&anwser=${selectedCard?.name}&username=${username}`, {
+    fetch(`http://178.84.208.93:3001/answer?room=${currentRoomName}&anwser=${selectedCard?.name}&username=${username}`, {
       method: 'PUT'
     })
       .then(response => {
@@ -87,7 +87,7 @@ const GuessTheEffect = () => {
   };
 
   const startGame = () => {
-    fetch(`http://localhost:3001/startGame?room=${currentRoomName}`, {
+    fetch(`http://178.84.208.93:3001/startGame?room=${currentRoomName}`, {
       method: 'PUT'
     })
       .then(response => {
@@ -136,16 +136,16 @@ const GuessTheEffect = () => {
           </tbody>
         </table>
       </div>
-
+{/* 
       {gamePhase === 'question' && (
         <div className="question" style={{ position: 'absolute', top: '20%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
           <h1>What is the effect of the following card? </h1>
           <h1>{cardAnswer?.name}</h1>
         </div>
-      )}
+      )} */}
 
       {gamePhase === 'nextQuestion' && (
-        <div className="question" style={{ position: 'absolute', top: '35%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
+        <div className="question" style={{ position: 'absolute', top: '40%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
           <h1>{cardAnswer?.name}</h1>
           <img src={cardAnswer?.imageurlen} alt="Card Image" style={{width: '65%'}} />
         </div>
@@ -160,9 +160,11 @@ const GuessTheEffect = () => {
       )}
 
       {!hasAnswered && (
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', display: 'flex', justifyContent: 'center', gap: '10px' }}>
+        <div className="answer-container">
+          <h1>What is the effect of the following card? </h1>
+          <h1>{cardAnswer?.name}</h1>
           {shuffledAnswers.map((card, index) => (
-            <button key={index} onClick={() => handleAnswer(card)}>
+            <button key={index} onClick={() => handleAnswer(card)} >
               {card?.effect}
             </button>
           ))}

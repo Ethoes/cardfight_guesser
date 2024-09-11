@@ -1,16 +1,24 @@
-.guess-the-effect-container {
+.answer-container {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     display: flex;
-    justify-content: flex-end; /* Aligns the images to the right */
-    padding: 20px;
+    justify-content: center;
+    gap: 10px;
+    flex-direction: column;
+    text-align: center;
+      width: 90%;
+      gap: 5px;
   }
   
-  .card-images {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px; /* Space between images */
+  @media (max-width: 600px) {
+    .answer-container {
+      flex-direction: column;
+      width: 90%;
+      gap: 5px;
+      top: 70%;
+    }
   }
+
   
-  .card-image {
-    width: 50%; /* Set the image size to 50% */
-    height: auto; /* Maintain aspect ratio */
-  }

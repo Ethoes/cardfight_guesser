@@ -16,7 +16,7 @@ const Home = () => {
   }, []);
 
   const fetchRooms = () => {
-    fetch('http://localhost:3001/rooms')
+    fetch('http://178.84.208.93:3001/rooms')
       .then(response => response.json())
       .then(data => {
         if (Array.isArray(data?.rooms)) {
@@ -43,7 +43,7 @@ const Home = () => {
     setCurrentRoomName(roomname);
     setRoomOwner(roomOwner);
     
-    fetch('http://localhost:3001/addPlayer', {
+    fetch('http://178.84.208.93:3001/addPlayer', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'

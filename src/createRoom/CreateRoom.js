@@ -23,7 +23,7 @@ const CreateRoom = (props) => {
 
   const createRoom = () => {
     console.log('createRoom', roomname, gamemode, chosenBoosters, username);
-    fetch('http://localhost:3001/newRoom', {
+    fetch('http://178.84.208.93:3001/newRoom', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
