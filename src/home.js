@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { UserContext } from './UserContext';
+import config from './config';
 import './Home.css';
 
 const Home = () => {
@@ -16,7 +17,7 @@ const Home = () => {
   }, []);
 
   const fetchRooms = () => {
-    fetch('http://178.84.208.93:3001/rooms')
+    fetch(`${config.apiUrl}/rooms`)
       .then(response => response.json())
       .then(data => {
         if (Array.isArray(data?.rooms)) {
@@ -43,7 +44,7 @@ const Home = () => {
     setCurrentRoomName(roomname);
     setRoomOwner(roomOwner);
     
-    fetch('http://178.84.208.93:3001/addPlayer', {
+    fetch(`${config.apiUrl}/addPlayer`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -66,7 +67,7 @@ const Home = () => {
     <div className="App">
       <h1>Welcome Home!</h1>
       <Link to="/CreateRoom">
-        <button>Create a room</button>
+        <button disabled={username === ''}>Create a room</button>
       </Link>
       <input
         type="text"
@@ -75,7 +76,7 @@ const Home = () => {
         disabled={username !== ''}
         onChange={handleUsernameChange}
       />
-      <button onClick={handleSubmit} disabled={username !== ''}>Submit</button>
+      <button onClick={handleSubmit} disabled={username === ''}>Submit</button>
       <div>
         <h2>Available Rooms</h2>
         <table>
@@ -93,7 +94,7 @@ const Home = () => {
                 <td>{room.gamemode}</td>
                 <td>{Array.isArray(room.players) ? room.players.map(player => player.username).join(', ') : ''}</td>
                 <Link to="/GuessTheEffect">
-                    <button onClick={() => goToRoom(room.roomname, room.roomOwner)}>join</button>
+                    <button onClick={() => goToRoom(room.roomname, room.roomOwner)} disabled={username !== ''}>join</button>
                 </Link>
               </tr>
             ))}

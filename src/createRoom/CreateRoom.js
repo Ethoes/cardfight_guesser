@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { UserContext } from '../UserContext';
+import config from '../config';
 
 const CreateRoom = (props) => {
   const [boosters, setBoosters] = useState(props.boosters);
@@ -23,7 +24,7 @@ const CreateRoom = (props) => {
 
   const createRoom = () => {
     console.log('createRoom', roomname, gamemode, chosenBoosters, username);
-    fetch('http://178.84.208.93:3001/newRoom', {
+    fetch(`${config.apiUrl}/newRoom`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

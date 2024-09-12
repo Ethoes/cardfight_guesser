@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { UserContext } from './UserContext';
 import './GuessTheEffect.css';
+import config from './config';
 
 const GuessTheEffect = () => {
   const { currentRoomName, currentRoomOwner, username } = useContext(UserContext);
@@ -17,7 +18,7 @@ const GuessTheEffect = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch(`http://178.84.208.93:3001/roomStatus?room=${currentRoomName}`);
+      const response = await fetch(`${config.apiUrl}/roomStatus?room=${currentRoomName}`);
       const data = await response.json();
       
       setUsers(data.users);
@@ -70,7 +71,7 @@ const GuessTheEffect = () => {
     } 
 
     setHasAnswered(true);
-    fetch(`http://178.84.208.93:3001/answer?room=${currentRoomName}&anwser=${selectedCard?.name}&username=${username}`, {
+    fetch(`${config.apiUrl}/answer?room=${currentRoomName}&anwser=${selectedCard?.name}&username=${username}`, {
       method: 'PUT'
     })
       .then(response => {
@@ -87,7 +88,7 @@ const GuessTheEffect = () => {
   };
 
   const startGame = () => {
-    fetch(`http://178.84.208.93:3001/startGame?room=${currentRoomName}`, {
+    fetch(`${config.apiUrl}/startGame?room=${currentRoomName}`, {
       method: 'PUT'
     })
       .then(response => {
